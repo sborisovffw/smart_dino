@@ -7,7 +7,7 @@ function nextGeneration() {
   calculateFitness();
   generation ++;
   let debug = document.getElementById('scores');
-  debug.innerHTML += 'Generation' + generation + ':' + calculateGenerationFittness() + '<br>';
+  debug.innerHTML = 'Generation' + generation + ':' + calculateGenerationFittness() + '<br>';
   
   for (let i = 0;  i < totalPopulation; i++) {
     // Selectively pick a random high fitness dino.
@@ -21,10 +21,13 @@ function nextGeneration() {
  */
 function calculateGenerationFittness() {
   let sum = 0;
+  let score = 0
   for(let dino of savedDinos) {
-    sum += dino.score;
+     if(dino.score > score) {
+       score = dino.score;
+     }
   }
-  return sum/savedDinos.length;
+  return score;
 }
 
 /**

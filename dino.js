@@ -2,16 +2,19 @@ class Dino {
   constructor(brain) {
     this.y = height / 2
     this.x = 64
+    this.width = 50;
+    this.height = 100;
     this.gravity = 0.6
     this.lift = -20
     this.velocity = 0
+    this.ducked = false;
 
     // Is this a copy of another Bird or a new one?
     // The Neural Network is the bird's "brain"
     if (brain instanceof NeuralNetwork) {
       this.brain = brain.copy();
     } else {
-      this.brain = new NeuralNetwork(4, 4, 1);
+      this.brain = new NeuralNetwork(4, 16, 3);
     }
 
     // Score is how many frames it's been alive
@@ -20,10 +23,16 @@ class Dino {
     this.fitness = 0;
   }
   show() {
-    fill(255)
-    rect(this.x, this.y, 50, 100);
-
-    line(0, height - height / 4, width, height - height / 4);
+    fill(10,10,10,10)
+    if (this.ducked == true) {
+      this.y = height / 2 + 50;
+      this.height = 50;
+    }
+    if (this.onGround() == true && this.ducked == false) {
+      this.y = height / 2;
+      this.height = 100;
+    }
+    rect(this.x, this.y, this.width, this.height);
   }
   goUp() {
     this.velocity += this.lift
@@ -43,13 +52,22 @@ class Dino {
     let inputs = [];
     var nearestObstacle = obstacles[0];
     if (nearestObstacle) {
-      inputs[0] = this.y / height;
-      inputs[1] = nearestObstacle.x / width;
-      inputs[2] = nearestObstacle.speed / maxSpeed;
-      inputs[3] = map(nearestObstacle.height / 100, nearestObstacle.minHeight, nearestObstacle.maxHeight, 0, 1);
+      // inputs[0] = this.y / height;
+      inputs[0] = nearestObstacle.x / width;
+      inputs[1] = nearestObstacle.speed / maxSpeed;
+      inputs[2] = map(nearestObstacle.height / 100, nearestObstacle.minHeight, nearestObstacle.maxHeight, 0, 1);
+      inputs[3  ] = map(nearestObstacle.y, 0.55*height - 70,  0.75*height - 50, 0, 1);
       var output = this.brain.predict(inputs);
-      if (output > 0.5 && this.onGround()) {
+      var indexOfMaxValue = output.reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0);
+      if (indexOfMaxValue == 0 && this.onGround()) {
+        this.ducked = false;
         this.goUp();
+      }
+      if (indexOfMaxValue == 1 && this.onGround()) {
+        this.ducked = true;
+      }
+      if (indexOfMaxValue == 2) {
+        this.ducked = false;
       }
     }
   }

@@ -1,21 +1,13 @@
 class Obstacle {
   constructor(speed) {
-    this.x = width;
-    this.maxHeight = 1.01;
-    this.minHeight = 0.5;
-    this.height = random(this.minHeight, this.maxHeight) * 100;
-    this.y = 0.75 * height - this.height;
-    this.speed = speed;
-    this.highlight = true;
+
+    createObstacle(this, speed);
   }
 
   show() {
-    fill(0);
-    if (this.highlight) {
-      fill('#FF0863')
-    }
-    rect(this.x, this.y, 25, this.height);
 
+    fill(this.color);
+    rect(this.x, this.y, this.width, this.height);
   }
   update() {
     this.x -= this.speed
@@ -26,17 +18,41 @@ class Obstacle {
 
   // Calculate if dino hits the things.
   hits(dino) {
-
-    if (
-      (dino.x + 50 > this.x && dino.x + 50 < this.x + 25) ||
-      (dino.x > this.x && dino.x < this.x + 25) ||
-      (this.x >= dino.x && this.x + 25 < dino.x + 50)){
-      if (dino.y + 75 > this.y) {
-        return true;
-      }
+    if (this.x < dino.x + dino.width &&
+      this.x + this.width > dino.x &&
+      this.y < dino.y + dino.height &&
+      this.height + this.y > dino.y) {
+      return true;
+      console.log('heelo');
     }
     else {
       return false;
     }
+  }
+}
+
+function createObstacle(obst, speed) {
+  var probability = random(0, 1);
+  if (probability > 0.3) {
+    obst.x = width;
+    obst.maxHeight = 0.6;
+    obst.minHeight = 0.5;
+    obst.height = random(obst.minHeight, obst.maxHeight) * 100;
+    obst.width = 25;
+    obst.y = 0.75 * height - obst.height;
+    obst.speed = speed;
+    obst.highlight = true;
+    obst.color = '#FF0863';
+  }
+  else {
+    obst.x = width;
+    obst.maxHeight = 0.6;
+    obst.minHeight = 0.7;
+    obst.height = random(obst.minHeight, obst.maxHeight) * 100;
+    obst.width = 25;
+    obst.y = 0.55 * height - obst.height;
+    obst.speed = speed;
+    obst.highlight = true;
+    obst.color = '#03ff9e';
   }
 }
