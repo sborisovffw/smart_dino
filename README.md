@@ -1,2 +1,2 @@
-# smart_dino
-Neuroevolution implementation of the dinosaur chrome game.
+# Smart Dino
+Neuroevolution implementation of the chrome game.
